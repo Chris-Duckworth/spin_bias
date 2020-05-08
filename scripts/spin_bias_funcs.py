@@ -491,71 +491,6 @@ def plot_lambdaR_mhalo_single_population(tab, ax, color='chartreuse', label=None
 	return ax
 
 
-def plot_lambdaR_mhalo_single_population(tab, ax, color='chartreuse', lower=None, upper=None, label=None):
-	'''
-	Given an overall population of galaxies (with lambdaR, Mhalo, skeleton distances) this 
-	separates based on halo mass, and makes a plot with the average values for the total . Returns ax.
-	
-	---
-	Input :
-	
-	tab : pandas.dataframe object
-		Table containing all galaxies (normally filtered on morphology prior to this). Table
-		should contain CW distances, masses etc. and lambda_R measure.
-	
-	ax : matplotlib.axis object
-	
-	color : string
-		Optional arg. Color for population
-	
-	lower : float
-		Optional arg. Can set own boundaries on how to divide population into 3.
-	
-	upper : float
-		Optional arg. Can set own boundaries on how to divide population into 3.
-	
-	label : string
-		Optional arg. label for population
-	---
-	Output : 
-	
-	ax : 
-	'''
-		
-	if (upper is None) or (lower is None):
-		# If either undefined, finding percentiles (splitting at 33, 66)
-		upper = np.percentile(tab.halo_mass_stel.values, 66)
-		lower = np.percentile(tab.halo_mass_stel.values, 33)
-	
-	# sub-selecting percentile tabs.
-	upper_tab = tab[(tab.halo_mass_stel.values > upper) & (tab.halo_mass_stel.values < 14.5)]
-	middle_tab = tab[(tab.halo_mass_stel.values <= upper) & (tab.halo_mass_stel.values >= lower)]
-	lower_tab = tab[tab.halo_mass_stel.values < lower]
-	
-	# plotting filament samples.
-	ax.plot(lower_tab.halo_mass_stel.values, lower_tab.lambda_re.values, color=color, marker='v', linestyle='None', alpha=0.3, markersize=2)
-	ax.plot(middle_tab.halo_mass_stel.values, middle_tab.lambda_re.values, color=color, marker='v', linestyle='None', alpha=0.3, markersize=2)
-	ax.plot(upper_tab.halo_mass_stel.values, upper_tab.lambda_re.values, color=color, marker='v', linestyle='None', alpha=0.3, markersize=2)
-
-	# overplotting the average values in each bin.
-	ax.errorbar([np.median(lower_tab.halo_mass_stel.values), np.median(middle_tab.halo_mass_stel.values), np.median(upper_tab.halo_mass_stel.values)],
-				[np.median(lower_tab.lambda_re.values), np.median(middle_tab.lambda_re.values), np.median(upper_tab.lambda_re.values)], 
-				yerr=[stats.sem(lower_tab.lambda_re.values), stats.sem(middle_tab.lambda_re.values), stats.sem(upper_tab.lambda_re.values)], 
-				 color=color, marker='H', markersize=5, capsize=5, label=label)
-
-	# adding percentile vertical lines to denote boundaries.
-	ax.axvline(upper, color=color, alpha=0.3, linestyle='dashed')
-	ax.axvline(lower, color=color, alpha=0.3, linestyle='dashed')
-
-	# formatting final plot.
-	#ax.set_xscale('log')
-	ax.set_ylabel(r'$\mathrm{\lambda_{R}(< 1.5R_{e})}$', fontsize=16)
-	ax.set_xlabel(r'$\mathrm{M_{halo}}$', fontsize=16)
-	ax.set_xlim((np.min(tab.halo_mass_stel.values), 14))
-	ax.set_ylim((0,1))
-	return ax
-	
-
 def binned_percentiles_three_props(x_quantity, y_quantity, z_quantity, x_bins, z_percentiles, z_percentile_labels, ax, colors=['lightslategrey', 'slateblue', 'dodgerblue', 'rebeccapurple'], extrema=False):
 	'''
 	Given three properties (x, y, z), this bins in the x direction. In each x bin, the population is split on percentiles
@@ -581,6 +516,9 @@ def binned_percentiles_three_props(x_quantity, y_quantity, z_quantity, x_bins, z
 
 	ax : plt.axis object
 		Axis to plot onto.
+	
+	extrema : boolean
+		Optional arg. Set to True if you only want the extrema percentiles plotted.
 	
 	---
 	Output :
