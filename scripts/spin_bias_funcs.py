@@ -473,7 +473,7 @@ def plot_lambdaR_mhalo_single_population(tab, ax, color='chartreuse', lower=None
 	upper_tab = tab[(tab.halo_mass_stel.values > upper) & (tab.halo_mass_stel.values < 14.5)]
 	middle_tab = tab[(tab.halo_mass_stel.values <= upper) & (tab.halo_mass_stel.values >= lower)]
 	lower_tab = tab[tab.halo_mass_stel.values < lower]
-
+	
 	# plotting filament samples.
 	ax.plot(lower_tab.halo_mass_stel.values, lower_tab.lambda_re.values, color=color, marker='v', linestyle='None', alpha=0.3, markersize=2)
 	ax.plot(middle_tab.halo_mass_stel.values, middle_tab.lambda_re.values, color=color, marker='v', linestyle='None', alpha=0.3, markersize=2)

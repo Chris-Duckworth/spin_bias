@@ -61,6 +61,17 @@ def tng100_pa_sample(tng100_main):
     return tng100_pa
 
 # ---------------------------------------------------------------------------------------
+# func: SFMS_breakdown
+#
+# This function splits into individual dataframes based on the flags in annalisa's flags.
+
+def SFMS_breakdown(tab):
+    QU = tab[tab.sfms_flag == 0]
+    SF = tab[tab.sfms_flag == 1]
+    GV = tab[tab.sfms_flag == -1]
+    return QU, SF, GV
+
+# ---------------------------------------------------------------------------------------
 # func: GZ_match
 #
 # This function loads in the galaxyZoo tabledata (VAC for MaNGA) and matches to a given
