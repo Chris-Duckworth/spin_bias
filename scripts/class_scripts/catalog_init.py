@@ -154,3 +154,22 @@ def select_morphology(tab, morphology, vote_frac = 0.7, Tsplit = 3):
 	elif morphology == 'sbsd':
 		return LTGs[Ttype > Tsplit]
 
+
+def select_cw_enviro(tab, feature, node_dist=2, filament_dist=2):
+	'''
+	Assuming load_basic has been called (and output is provided as input here) and this 
+	has been matched to the CW info. This returns only galaxies within a distance of the 
+	defined cosmic web feature.
+	'''
+	assert feature in ['node', 'filament', 'no_cw'], 'not a valid CW environment selection!'
+
+	if feature == 'node':
+		return tab[(tab.log_dnode_norm.values < np.log10(node_dist)) & (tab.log_dskel_norm.values > np.log10(filament_dist))]
+
+	if feature == 'filament':
+		return tab[(tab.log_dnode_norm.values > np.log10(node_dist)) & (tab.log_dskel_norm.values < np.log10(filament_dist))]
+
+	if feature == 'no_cw':
+		return tab[(tab.log_dnode_norm.values > np.log10(node_dist)) & (tab.log_dskel_norm.values > np.log10(filament_dist))]
+
+
