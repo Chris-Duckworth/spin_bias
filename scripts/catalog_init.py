@@ -134,7 +134,12 @@ def select_morphology(tab, morphology, vote_frac = 0.7, Tsplit = 3):
 	Given a selected morphology (etg, ltg, s0sa, sbsd) this returns a table only 
 	containing that type.  
 	'''
-	assert morphology in ['etg', 'ltg', 's0sa', 'sbsd'], 'not a valid morphology selection!'
+	assert morphology in ['etg', 'ltg', 's0sa', 'sbsd', 'unclassified'], 'not a valid morphology selection!'
+	
+	if morphology == 'unclassified':
+		# finding inverse of ETG and LTG selection.
+		ETGs_inverse = tab[~(tab.t01_smooth_or_features_a01_smooth_debiased >= vote_frac)]
+		return ETGs_inverse[~(ETGs_inverse.t01_smooth_or_features_a02_features_or_disk_debiased >= vote_frac)]
 	
 	ETGs = tab[tab.t01_smooth_or_features_a01_smooth_debiased >= vote_frac]
 	LTGs = tab[tab.t01_smooth_or_features_a02_features_or_disk_debiased >= vote_frac]
@@ -153,6 +158,7 @@ def select_morphology(tab, morphology, vote_frac = 0.7, Tsplit = 3):
 	
 	elif morphology == 'sbsd':
 		return LTGs[Ttype > Tsplit]
+	
 
 
 def select_cw_enviro(tab, feature, node_dist=2, filament_dist=2):
@@ -161,13 +167,19 @@ def select_cw_enviro(tab, feature, node_dist=2, filament_dist=2):
 	has been matched to the CW info. This returns only galaxies within a distance of the 
 	defined cosmic web feature.
 	'''
-	assert feature in ['node', 'filament', 'no_cw'], 'not a valid CW environment selection!'
+	assert feature in ['node', 'no_node', 'filament', 'no_filament', 'no_cw'], 'not a valid CW environment selection!'
 
 	if feature == 'node':
 		return tab[(tab.log_dnode_norm.values < np.log10(node_dist)) & (tab.log_dskel_norm.values > np.log10(filament_dist))]
+	
+	if feature == 'no_node':
+		return tab[tab.log_dnode_norm.values > np.log10(node_dist)]
 
 	if feature == 'filament':
 		return tab[(tab.log_dnode_norm.values > np.log10(node_dist)) & (tab.log_dskel_norm.values < np.log10(filament_dist))]
+		
+	if feature == 'no_filament':
+		return tab[tab.log_dskel_norm.values > np.log10(filament_dist)]
 
 	if feature == 'no_cw':
 		return tab[(tab.log_dnode_norm.values > np.log10(node_dist)) & (tab.log_dskel_norm.values > np.log10(filament_dist))]
