@@ -16,9 +16,9 @@ class Catalog:
 		'''matching to CW info if required'''
 		self.df = catalog_init.match_to_cw(basepath, self.df, return_plot)
 
-	def remove_satellites(self):
+	def remove_satellites(self, keep_zero_mass=False):
 		'''finding centrals only'''
-		self.df = catalog_init.centrals_only(self.df)
+		self.df = catalog_init.centrals_only(self.df, keep_zero_mass)
     
 	def select_morphology(self, morphology, vote_frac = 0.7, Tsplit = 3):
 		'''finding galaxies of certain morphology only'''
@@ -28,9 +28,13 @@ class Catalog:
 		'''finding galaxies near to cw features only'''
 		self.df = catalog_init.select_cw_enviro(self.df, feature, node_dist, filament_dist)
     
-	def compute_expected_y(self, x_col, y_col, method="polynomial", return_plot=False, deg=1, n_neighbours=10):
+	def return_matched_subsample(self, col_name, match_values):
+		'''slicing table to return nearest match to each supplied value (match_value)'''
+		return catalog_init.return_matched_subsample(self.df, col_name, match_values)
+    
+	def compute_expected_y(self, x_col, y_col, method="polynomial", return_plot=False, plot_x_extent=[11.5, 14], deg=1, n_neighbours=10):
 		'''returns average function'''
-		return catalog_process.compute_expected_y(self.df[x_col].values, self.df[y_col].values, method, return_plot, deg, n_neighbours)
+		return catalog_process.compute_expected_y(self.df[x_col].values, self.df[y_col].values, method, return_plot, plot_x_extent, deg, n_neighbours)
         
 	def compute_binned_percentile_three_props(self, x_col, y_col, z_col, x_bins, z_percentiles):
 		'''
@@ -43,6 +47,10 @@ class Catalog:
 	def plot_scatter(self, x_col, y_col, ax, label=None, color='k'):
 		'''scatter plot of defined columns''' 
 		return catalog_plot.plot_scatter(self.df[x_col].values, self.df[y_col].values, ax, label=label, color=color)
+		
+	def plot_histogram(self, x_col, ax, **kwargs):
+		'''histogram plot of defined column''' 
+		return catalog_plot.plot_histogram(self.df[x_col].values, ax, **kwargs)	
 	
 	def plot_binned_percentiles_three_props(self, x_col, y_col, z_col, x_bins, z_percentiles, z_percentile_labels, ax, colors=['lightslategrey', 'slateblue', 'dodgerblue', 'rebeccapurple'], extrema=False):
 		'''

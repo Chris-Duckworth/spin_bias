@@ -9,7 +9,7 @@ from scipy.ndimage.filters import uniform_filter1d
 from scipy.interpolate import interp1d
 import scipy.stats as stats
 
-def compute_expected_y(x, y, method='polynomial', return_plot=False, deg=1, n_neighbours=5): 
+def compute_expected_y(x, y, method='polynomial', return_plot=False, plot_x_extent=[9, 13], deg=1, n_neighbours=5): 
 	'''
 	Given a set of x and y values, this computes the expected y value (or average) as a 
 	function of x. The defined method will compute this via fitting a polynomial, rolling
@@ -37,11 +37,12 @@ def compute_expected_y(x, y, method='polynomial', return_plot=False, deg=1, n_ne
 		plt.cla()
 		plt.close()
 		fig, ax = plt.subplots()
-		ax.hexbin(x, y, cmap=plt.cm.Reds, gridsize=30, extent=(11.5, 15, 0, 1))
+		ax.hexbin(x, y, cmap=plt.cm.Reds, gridsize=30, extent=(plot_x_extent[0], plot_x_extent[1], 0, 1))
 		# plotting polynomial over same range as the data.
 		xrange = np.linspace(np.min(x), np.max(x))
 		yrange = p(xrange)
 		ax.plot(xrange, yrange, color='skyblue', linewidth=5, alpha=1)
+		ax.set_xlim(plot_x_extent)
 		plt.show()
 		
 	return p
@@ -202,3 +203,5 @@ def compute_residuals_binned_y_three_prop(x_quantity, y_quantity, z_quantity, p,
 	y_error = np.array(y_error).reshape(np.unique(x_digitized).shape[0], np.unique(z_digitized).shape[0])
 
 	return x_medians, y_medians, y_error
+
+

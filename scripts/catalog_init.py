@@ -32,19 +32,27 @@ def load_basic(basepath):
 	# matching on unique observation identifier 'plateifu' for pipe3d
 	mpl8_gz_pipe3d = mpl8_gz.merge(pipe3d, left_on='plateifu', right_on='plateifu')
 	
+	# creating log-scale stellar mass column for certain circumstances.
+	mpl8_gz_pipe3d['nsa_elpetro_mass_logscale'] = np.log10(mpl8_gz_pipe3d['nsa_elpetro_mass'])
+	
+	
 	return mpl8_gz_pipe3d
 
 
-def centrals_only(tab):
+def centrals_only(tab, keep_zero_mass=False):
 	'''
 	This removes all satellites from the sample. Requires a group catalog, here matched by
 	match_to_cw, so make sure this has been run first.
 	'''
-	# selecting only centrals.
-	tab = tab[(tab.massive_flag.values == 1) & (tab.f_edge.values > 0.6) & (tab.halo_mass_stel.values > 0)]
-
+	
+	if keep_zero_mass == True:
+		tab = tab[(tab.massive_flag.values == 1) & (tab.f_edge.values > 0.6)]
+	else:
+		# selecting only centrals.
+		tab = tab[(tab.massive_flag.values == 1) & (tab.f_edge.values > 0.6) & (tab.halo_mass_stel.values > 0)]
+	
 	# adding stellar to halo mass ratio. 
-	tab['stellar_to_halo_ratio'] = np.log10(tab.nsa_elpetro_mass.values) -  tab.halo_mass_stel.values 
+	tab['stellar_to_halo_ratio'] = np.log10(tab['nsa_elpetro_mass']) -  tab['halo_mass_stel']
 	
 	return tab
 
@@ -167,21 +175,45 @@ def select_cw_enviro(tab, feature, node_dist=2, filament_dist=2):
 	has been matched to the CW info. This returns only galaxies within a distance of the 
 	defined cosmic web feature.
 	'''
-	assert feature in ['node', 'no_node', 'filament', 'no_filament', 'no_cw'], 'not a valid CW environment selection!'
+	assert feature in ['node', 'no_node', 'filament', 'filament_residual', 'no_filament', 'no_cw'], 'not a valid CW environment selection!'
 
 	if feature == 'node':
-		return tab[(tab.log_dnode_norm.values < np.log10(node_dist)) & (tab.log_dskel_norm.values > np.log10(filament_dist))]
+		return tab[tab.log_dnode_norm.values < np.log10(node_dist)]
 	
-	if feature == 'no_node':
+	elif feature == 'no_node':
 		return tab[tab.log_dnode_norm.values > np.log10(node_dist)]
 
-	if feature == 'filament':
+	elif feature == 'filament':
 		return tab[(tab.log_dnode_norm.values > np.log10(node_dist)) & (tab.log_dskel_norm.values < np.log10(filament_dist))]
-		
-	if feature == 'no_filament':
+	
+	elif feature == 'filament_residual':
+		return tab[~( (tab.log_dnode_norm.values > np.log10(node_dist)) & (tab.log_dskel_norm.values < np.log10(filament_dist)) )]
+	
+	elif feature == 'no_filament':
 		return tab[tab.log_dskel_norm.values > np.log10(filament_dist)]
 
-	if feature == 'no_cw':
+	elif feature == 'no_cw':
 		return tab[(tab.log_dnode_norm.values > np.log10(node_dist)) & (tab.log_dskel_norm.values > np.log10(filament_dist))]
 
 
+
+def return_matched_subsample(tab, col_name, match_values):
+	'''
+	Given a set of values (match_values), this function returns a subsample of the supplied
+	table (tab) with one closest match to each of the values. Matched on col_name.
+	
+	This doesn't find an optimised nearest neighbour (i.e. when two points are close), 
+	simply removes the entry from the pool after matching.
+	'''
+	# creating a table to be adaptively sliced.
+	iter_tab = tab
+	# empty array to append match index to.
+	indices = []
+	
+	# going through each value to find match in the tab.
+	for val in match_values:
+		idx = iter_tab.index[(np.abs(iter_tab[col_name].values - val)).argmin()]
+		indices.append(idx)
+		iter_tab = iter_tab.drop(idx)
+		
+	return tab.loc[indices]

@@ -56,6 +56,27 @@ def plot_scatter(x, y, ax, label=None, color='k'):
 	return 
 
 
+def plot_histogram(x, ax, **kwargs):
+	'''
+	Simple function which returns a histogram plot of a column in the data frame. 
+	---
+	Input : 
+
+	x : np.array()
+		Array of x values (1D)
+	
+	ax : plt.axis object
+		Axis to plot onto.
+	
+	---
+	Output :
+	
+	'''
+	ax.hist(x, **kwargs)
+	return 
+
+
+
 def plot_binned_percentiles_three_props(x_quantity, y_quantity, z_quantity, x_bins, z_percentiles, z_percentile_labels, ax, colors=['lightslategrey', 'slateblue', 'dodgerblue', 'rebeccapurple'], extrema=False):
 	'''
 	Given three properties (x, y, z), this bins in the x direction. In each x bin, the population is split on percentiles
