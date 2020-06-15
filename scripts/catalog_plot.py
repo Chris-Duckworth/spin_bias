@@ -51,9 +51,7 @@ def plot_scatter(x, y, ax, label=None, color='k'):
 	Output :
 	
 	'''
-	
-	ax.plot(x, y, color=color, marker='^', label=label, linestyle='None', alpha=0.3, markersize=2)
-	return 
+	return ax.plot(x, y, color=color, marker='^', label=label, linestyle='None', alpha=0.3, markersize=2)
 
 
 def plot_histogram(x, ax, **kwargs):
@@ -72,8 +70,29 @@ def plot_histogram(x, ax, **kwargs):
 	Output :
 	
 	'''
-	ax.hist(x, **kwargs)
-	return 
+	return ax.hist(x, **kwargs)
+
+
+def plot_hexbin(x, y, ax, **kwargs):
+	'''
+	Simple function which returns a hexbin plot of a column in the data frame. 
+	---
+	Input : 
+
+	x : np.array()
+		Array of x values (1D)
+		
+	y : np.array()
+		Array of y values (1D)
+	
+	ax : plt.axis object
+		Axis to plot onto.
+	
+	---
+	Output :
+	
+	'''
+	return ax.hexbin(x, y, **kwargs)
 
 
 

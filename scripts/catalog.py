@@ -51,6 +51,10 @@ class Catalog:
 	def plot_histogram(self, x_col, ax, **kwargs):
 		'''histogram plot of defined column''' 
 		return catalog_plot.plot_histogram(self.df[x_col].values, ax, **kwargs)	
+		
+	def plot_hexbin(self, x_col, y_col, ax, **kwargs):
+		'''hexbin plot of defined columns''' 
+		return catalog_plot.plot_hexbin(self.df[x_col].values, self.df[y_col].values, ax, **kwargs)	
 	
 	def plot_binned_percentiles_three_props(self, x_col, y_col, z_col, x_bins, z_percentiles, z_percentile_labels, ax, colors=['lightslategrey', 'slateblue', 'dodgerblue', 'rebeccapurple'], extrema=False):
 		'''
