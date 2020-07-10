@@ -9,7 +9,7 @@ from scipy.ndimage.filters import uniform_filter1d
 from scipy.interpolate import interp1d
 import scipy.stats as stats
 
-def compute_expected_y(x, y, method='polynomial', return_plot=False, plot_x_extent=[9, 13], deg=1, n_neighbours=5): 
+def compute_expected_y(x, y, method='polynomial', return_plot=False, plot_x_extent=[9, 13], plot_y_extent=[0, 1], deg=1, n_neighbours=5): 
 	'''
 	Given a set of x and y values, this computes the expected y value (or average) as a 
 	function of x. The defined method will compute this via fitting a polynomial, rolling
@@ -37,7 +37,7 @@ def compute_expected_y(x, y, method='polynomial', return_plot=False, plot_x_exte
 		plt.cla()
 		plt.close()
 		fig, ax = plt.subplots()
-		ax.hexbin(x, y, cmap=plt.cm.Reds, gridsize=30, extent=(plot_x_extent[0], plot_x_extent[1], 0, 1))
+		ax.hexbin(x, y, cmap=plt.cm.Reds, gridsize=30, extent=(plot_x_extent[0], plot_x_extent[1], plot_y_extent[0], plot_y_extent[1]))
 		# plotting polynomial over same range as the data.
 		xrange = np.linspace(np.min(x), np.max(x))
 		yrange = p(xrange)

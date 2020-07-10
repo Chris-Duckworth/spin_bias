@@ -4,75 +4,139 @@
 import pandas as pd 
 import numpy as np 
 from astropy.io import fits
+from astropy.table import Table
 from astropy.cosmology import Planck15
 from scipy import interpolate
 import matplotlib.pyplot as plt
 
 
-def load_basic(basepath):
+def load_basic(basepath, version='mpl9', match_to_lim=False):
 	''' 
 	Function which returns a pandas dataframe object containing the basic MaNGA info
 	required for this analysis.
 	'''
-	
-	# loading in reference catalog to define mpl8 sample.
-	mpl8 = pd.read_csv(basepath + 'mpl8_main_TNG_ref.csv')
-	
-	# loading pipe3d information.
-	pipe3d = pd.read_csv(basepath + 'manga.Pipe3D_v2_5_3.csv')
-	# dropping mangaid from pipe3d because its wrong.
-	pipe3d = pipe3d.drop(columns=["mangaid"]) 
+	assert version in ['mpl8', 'mpl9'], 'Pick a valid data release pls'
 	
 	# loading in galaxyZoo information.
 	gz = pd.read_csv(basepath + 'MaNGA_gz-v1_0_1.csv')
 	
-	# matching mpl8 to GZ
-	mpl8_gz = mpl8.merge(gz, left_on='mangaid', right_on='MANGAID')
+	if version == 'mpl8':	
+		if match_to_lim == True:
+			print('Warning: group catalog matching ignored for MPL-8.')
+		
+		# loading in reference catalog to define mpl8 sample.
+		mpl8 = pd.read_csv(basepath + 'mpl8_main_TNG_ref.csv')
 	
-	# matching on unique observation identifier 'plateifu' for pipe3d
-	mpl8_gz_pipe3d = mpl8_gz.merge(pipe3d, left_on='plateifu', right_on='plateifu')
+		# loading pipe3d information.
+		pipe3d = pd.read_csv(basepath + 'manga.Pipe3D_v2_5_3.csv')
+		# dropping mangaid from pipe3d because its wrong.
+		pipe3d = pipe3d.drop(columns=["mangaid"]) 
+		
+		# matching mpl8 to GZ
+		mpl8_gz = mpl8.merge(gz, left_on='mangaid', right_on='MANGAID')
+	
+		# matching on unique observation identifier 'plateifu' for pipe3d
+		gz_pipe3d = mpl8_gz.merge(pipe3d, left_on='plateifu', right_on='plateifu')
+		
+	elif version == 'mpl9':
+	
+		if match_to_lim == True:
+			# If argument supplied, this returns a matched group catalog.
+			mpl9 = pd.read_csv(basepath + 'drpall-v2_7_1_lim_1arcsec.csv')	
+			
+		elif match_to_lim == False:
+			# loading in drpall in order to match plateifu and mangaid between cats.		
+			drpall_fits = Table.read(basepath+'drpall-v2_7_1.fits', format='fits', hdu=1)
+			# to convert to pandas, removing all columns with higher dimensions.
+			names = [name for name in drpall_fits.colnames if len(drpall_fits[name].shape) <= 1] 
+			mpl9 = drpall_fits[names].to_pandas()	
+			# decoding strings which are matched on here.			
+			mpl9['plateifu'] = mpl9.plateifu.str.decode('utf-8')
+			mpl9['mangaid'] = mpl9.mangaid.str.decode('utf-8')
+		
+		# loading in pipe3d info.
+		pipe3d_fits = Table.read(basepath+'SDSS15Pipe3D_clean_v2_7_1.fits', format='fits')
+		pipe3d = pipe3d_fits.to_pandas()
+		# dropping mangaid from pipe3d because its wrong. decoding plateifu
+		pipe3d = pipe3d.drop(columns=["MaNGAID"]) 
+		pipe3d['plateifu'] = pipe3d.plateifu.str.decode('utf-8')
+
+		# matching mpl9 to GZ
+		mpl9_gz = mpl9.merge(gz, left_on='mangaid', right_on='MANGAID')
+		
+		# matching on unique observation identifier 'plateifu' for pipe3d
+		gz_pipe3d = mpl9_gz.merge(pipe3d, left_on='plateifu', right_on='plateifu')
 	
 	# creating log-scale stellar mass column for certain circumstances.
-	mpl8_gz_pipe3d['nsa_elpetro_mass_logscale'] = np.log10(mpl8_gz_pipe3d['nsa_elpetro_mass'])
+	gz_pipe3d['nsa_elpetro_mass_logscale'] = np.log10(gz_pipe3d['nsa_elpetro_mass'])
 	
-	
-	return mpl8_gz_pipe3d
+	return gz_pipe3d
 
 
-def centrals_only(tab, keep_zero_mass=False):
+def group_membership(tab, sel='cen', group_cat='lim', keep_zero_mass=False):
 	'''
-	This removes all satellites from the sample. Requires a group catalog, here matched by
-	match_to_cw, so make sure this has been run first.
+	This selects only centrals or satellites.
+	Requires a group catalog, make sure it has been matched to the Yang or Lim group 
+	catalog prior to this.
 	'''
+	assert group_cat in ['lim', 'yang'], 'Pick a valid group catalog option!'
+	assert sel in ['all', 'cen', 'sat'], 'Pick a valid group membership!'
 	
-	if keep_zero_mass == True:
-		tab = tab[(tab.massive_flag.values == 1) & (tab.f_edge.values > 0.6)]
-	else:
-		# selecting only centrals.
-		tab = tab[(tab.massive_flag.values == 1) & (tab.f_edge.values > 0.6) & (tab.halo_mass_stel.values > 0)]
+	if group_cat == 'yang':
+		if sel == 'cen':
+			tab = tab[(tab.massive_flag.values == 1) & (tab.f_edge.values > 0.6)]
+		elif sel == 'sat':
+			tab = tab[(tab.massive_flag.values == 2) & (tab.f_edge.values > 0.6)]
+		
+		if keep_zero_mass == False:
+			tab = tab[tab.halo_mass_stel.values > 0]
+		# adding stellar to halo mass ratio. 
+		tab['stellar_to_halo_ratio'] = np.log10(tab['nsa_elpetro_mass']) -  tab['halo_mass_stel']
 	
-	# adding stellar to halo mass ratio. 
-	tab['stellar_to_halo_ratio'] = np.log10(tab['nsa_elpetro_mass']) -  tab['halo_mass_stel']
+	
+	elif group_cat == 'lim':
+		print('Warning: There are no zero mass groups in Lim et al. 2017 so param is irrelevant.')
+		# adding stellar to halo mass ratio.
+		tab['stellar_to_halo_ratio'] = np.log10(tab['nsa_elpetro_mass']) -  tab['log_halo_mass']
+		
+		if sel == 'cen':
+			# selecting only centrals.
+			tab = tab[tab.galaxyID.values == tab.cenID.values]
+		elif sel == 'sat':
+			# selecting only satellites.
+			tab = tab[tab.galaxyID.values != tab.cenID.values]
 	
 	return tab
 
 
-def match_to_cw(basepath, tab, return_plot=False):
+def match_to_cw(basepath, tab, version='mpl9', sigma=3, return_plot=False):
 	'''
 	Assuming load_basic has been called and an initial tab has been loaded, this takes 
 	that tabledata and matches to cw info. Normalisation is then computed and distance to 
 	nearest CW feature is found. Option to plot the normalisation of distances.
 	'''
+
+	if version == 'mpl6':
+		print('Warning: persistance sigma ignored for MPL-6, running with sigma=5.')
+		# loading in cw catalog which has already been matched to group info.
+		cw = pd.read_csv(basepath + 'CW_mpl6_yang_s5.csv')
+		mid = pd.read_csv(basepath + 'MaNGA_IDs')
 	
-	# loading in cw catalog which has already been matched to group info.
-	cw = pd.read_csv(basepath + 'CW_mpl6_yang_s5.csv')
-	mid = pd.read_csv(basepath+'MaNGA_IDs')
+		# merging catalogues and finding manga targets only.
+		cw_manga_targets = mid.merge(cw, left_on='ID', right_on='ID')
 	
-	# merging catalogues and finding manga targets only.
-	cw_manga_targets = mid.merge(cw, left_on='ID', right_on='ID')
+		# matching to input tab based on mangaid.
+		cw_manga_targets_tab = cw_manga_targets.merge(tab, left_on='MANGAID', right_on="mangaid")
 	
-	# matching to input tab based on mangaid.
-	cw_manga_targets_tab = cw_manga_targets.merge(tab, left_on='MANGAID', right_on="mangaid")
+	elif version == 'mpl9':
+		# loading in relevant catalog for persistance threshold.
+		if sigma == 3:
+			cw_manga_targets = pd.read_csv(basepath + 'CW_SDSS_GC1_S3/CW_DENSITY_S3_MANGA.csv')
+		elif sigma == 5:
+			cw_manga_targets = pd.read_csv(basepath + 'CW_SDSS_GC1_S5/CW_DENSITY_S5_MANGA.csv')
+		
+		# matching to input tab based on mangaid.
+		cw_manga_targets_tab = cw_manga_targets.merge(tab, left_on='MANGAID', right_on="mangaid")
 	
 	# computing distances to CW elements and finding normalisation.
 	# SDSS DR10 (7966 sq deg) with the redshift limit of z=0.2.

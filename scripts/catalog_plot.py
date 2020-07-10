@@ -31,7 +31,7 @@ def default(rcParams):
 	return 	
 
 
-def plot_scatter(x, y, ax, label=None, color='k'):
+def plot_scatter(x, y, ax, **kwargs):
 	'''
 	Simple function which returns scatter plot (x, y) of two defined columns in the data
 	frame. 
@@ -51,7 +51,7 @@ def plot_scatter(x, y, ax, label=None, color='k'):
 	Output :
 	
 	'''
-	return ax.plot(x, y, color=color, marker='^', label=label, linestyle='None', alpha=0.3, markersize=2)
+	return ax.plot(x, y, **kwargs)
 
 
 def plot_histogram(x, ax, **kwargs):
@@ -139,7 +139,7 @@ def plot_binned_percentiles_three_props(x_quantity, y_quantity, z_quantity, x_bi
 
 	if np.unique(z_digitized).shape[0] == 1:
 		label = str(z_percentile_labels)
-		ax.errorbar(x_medians.flatten(), y_medians.flatten(), yerr=y_error.flatten(), marker='H', markersize=5, capsize=5, alpha=0.75, color=colors[0], label=label)
+		ax.errorbar(x_medians.flatten(), y_medians.flatten(), yerr=y_error.flatten(), marker='H', markersize=5, capsize=5, alpha=1, linewidth=5, color=colors[0], label=label)
 	
 	else:
 		for m in np.unique(z_digitized):
@@ -147,11 +147,11 @@ def plot_binned_percentiles_three_props(x_quantity, y_quantity, z_quantity, x_bi
 				if (m == np.max(np.unique(z_digitized))) or (m == 0):
 					label = str(z_percentile_labels[m])
 					ax.errorbar(x_medians[:,m], y_medians[:,m], yerr=y_error[:,m],
-								marker='H', markersize=5, capsize=5, alpha=0.75, color=colors[m], label=label)
+								marker='H', markersize=5, capsize=5, alpha=1, linewidth=5, color=colors[m], label=label)
 			else :
 				label = str(z_percentile_labels[m])
 				ax.errorbar(x_medians[:,m], y_medians[:,m], yerr=y_error[:,m],
-							marker='H', markersize=5, capsize=5, alpha=0.75, color=colors[m], label=label)
+							marker='H', markersize=5, capsize=5, alpha=1, linewidth=5, color=colors[m], label=label)
     
 	return
 
@@ -204,7 +204,7 @@ def plot_binned_percentiles_three_props_residuals(x_quantity, y_quantity, z_quan
 	
 	if np.unique(z_digitized).shape[0] == 1:
 		label = str(z_percentile_labels)
-		ax.errorbar(x_medians, y_medians, yerr=y_error, marker='H', markersize=5, capsize=5, alpha=0.75, color=colors[0], label=label)
+		ax.errorbar(x_medians, y_medians, yerr=y_error, marker='H', markersize=5, capsize=5, linewidth=4, alpha=0.6, color=colors[0], label=label)
 	
 	else:
 		for m in np.unique(z_digitized):
@@ -212,11 +212,11 @@ def plot_binned_percentiles_three_props_residuals(x_quantity, y_quantity, z_quan
 				if (m == np.max(np.unique(z_digitized))) or (m == 0):
 					label = str(z_percentile_labels[m])
 					ax.errorbar(x_medians[:,m], y_medians[:,m], yerr=y_error[:,m],
-								marker='H', markersize=5, capsize=5, alpha=0.75, color=colors[m], label=label)
+								marker='H', markersize=5, capsize=5, alpha=0.6, linewidth=4, color=colors[m], label=label)
 			else :
 				label = str(z_percentile_labels[m])
 				ax.errorbar(x_medians[:,m], y_medians[:,m], yerr=y_error[:,m],
-							marker='H', markersize=5, capsize=5, alpha=0.75, color=colors[m], label=label)
+							marker='H', markersize=5, capsize=5, alpha=0.6, linewidth=4, color=colors[m], label=label)
     
 	return
 
