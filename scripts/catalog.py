@@ -56,13 +56,13 @@ class Catalog:
 		'''hexbin plot of defined columns''' 
 		return catalog_plot.plot_hexbin(self.df[x_col].values, self.df[y_col].values, ax, **kwargs)	
 	
-	def plot_binned_percentiles_three_props(self, x_col, y_col, z_col, x_bins, z_percentiles, z_percentile_labels, ax, colors=['lightslategrey', 'slateblue', 'dodgerblue', 'rebeccapurple'], extrema=False):
+	def plot_binned_percentiles_three_props(self, x_col, y_col, z_col, x_bins, z_percentiles, z_percentile_labels, ax, colors=['lightslategrey', 'slateblue', 'dodgerblue', 'rebeccapurple'], extrema=False, linestyle='solid'):
 		'''
 		Given three properties (x, y, z), this bins in the x direction. In each x bin, 
 		the population is split on percentiles in z, and the medians of x and y are found. 
 		The plot returns these median values (x vs y). 
 		'''    	
-		return catalog_plot.plot_binned_percentiles_three_props(self.df[x_col].values, self.df[y_col].values, self.df[z_col].values, x_bins, z_percentiles, z_percentile_labels, ax, colors, extrema)
+		return catalog_plot.plot_binned_percentiles_three_props(self.df[x_col].values, self.df[y_col].values, self.df[z_col].values, x_bins, z_percentiles, z_percentile_labels, ax, colors, extrema, linestyle)
 		
 	def plot_binned_percentiles_three_props_residuals(self, x_col, y_col, z_col, x_bins, z_percentiles, z_percentile_labels, p, ax, colors=['lightslategrey', 'slateblue', 'dodgerblue', 'rebeccapurple'], extrema=False):
 		'''

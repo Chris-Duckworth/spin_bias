@@ -96,7 +96,7 @@ def plot_hexbin(x, y, ax, **kwargs):
 
 
 
-def plot_binned_percentiles_three_props(x_quantity, y_quantity, z_quantity, x_bins, z_percentiles, z_percentile_labels, ax, colors=['lightslategrey', 'slateblue', 'dodgerblue', 'rebeccapurple'], extrema=False):
+def plot_binned_percentiles_three_props(x_quantity, y_quantity, z_quantity, x_bins, z_percentiles, z_percentile_labels, ax, colors=['lightslategrey', 'slateblue', 'dodgerblue', 'rebeccapurple'], extrema=False, linestyle='solid'):
 	'''
 	Given three properties (x, y, z), this bins in the x direction. In each x bin, the population is split on percentiles
 	in z, and the medians of x and y are found. The plot returns these median values (x vs y). 
@@ -139,7 +139,7 @@ def plot_binned_percentiles_three_props(x_quantity, y_quantity, z_quantity, x_bi
 
 	if np.unique(z_digitized).shape[0] == 1:
 		label = str(z_percentile_labels)
-		ax.errorbar(x_medians.flatten(), y_medians.flatten(), yerr=y_error.flatten(), marker='H', markersize=5, capsize=5, alpha=1, linewidth=5, color=colors[0], label=label)
+		ax.errorbar(x_medians.flatten(), y_medians.flatten(), yerr=y_error.flatten(), marker='H', markersize=5, capsize=5, alpha=1, linewidth=5, color=colors[0], label=label, linestyle=linestyle)
 	
 	else:
 		for m in np.unique(z_digitized):
@@ -147,11 +147,11 @@ def plot_binned_percentiles_three_props(x_quantity, y_quantity, z_quantity, x_bi
 				if (m == np.max(np.unique(z_digitized))) or (m == 0):
 					label = str(z_percentile_labels[m])
 					ax.errorbar(x_medians[:,m], y_medians[:,m], yerr=y_error[:,m],
-								marker='H', markersize=5, capsize=5, alpha=1, linewidth=5, color=colors[m], label=label)
+								marker='H', markersize=5, capsize=5, alpha=1, linewidth=5, color=colors[m], label=label, linestyle=linestyle)
 			else :
 				label = str(z_percentile_labels[m])
 				ax.errorbar(x_medians[:,m], y_medians[:,m], yerr=y_error[:,m],
-							marker='H', markersize=5, capsize=5, alpha=1, linewidth=5, color=colors[m], label=label)
+							marker='H', markersize=5, capsize=5, alpha=1, linewidth=5, color=colors[m], label=label, linestyle=linestyle)
     
 	return
 
