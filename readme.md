@@ -8,24 +8,15 @@ Data is taken from various sources and a basic summary of each catalogue is give
 
 Integral field unit observations are from the [MaNGA](https://www.sdss.org/surveys/manga/) galaxy survey, which is processed by the internal Data Analysis Pipeline [DAP](https://www.sdss.org/dr15/manga/manga-analysis-pipeline/). This is used to compute $\lambda_R$, a flux weighted measure of coherent rotation of a galaxy [see here](https://ui.adsabs.harvard.edu/abs/2007MNRAS.379..401E/abstract). 
 
-Additional information is taken from the [NASA-Sloan Atlas](https://www.sdss.org/dr13/manga/manga-target-selection/nsa/) targetting catalogue which provides stellar mass, and, galaxy inclination.
-
-For all galaxies in MaNGA, morphological classifications from citizen science project [galaxyZoo](https://www.sdss.org/dr15/data_access/value-added-catalogs/?vac_id=manga-morphologies-from-galaxy-zoo) are found 
-
+Additional information is taken from the [NASA-Sloan Atlas](https://www.sdss.org/dr13/manga/manga-target-selection/nsa/) targetting catalogue which provides stellar mass, and, galaxy inclination. For all galaxies in MaNGA, morphological classifications from citizen science project [galaxyZoo](https://www.sdss.org/dr15/data_access/value-added-catalogs/?vac_id=manga-morphologies-from-galaxy-zoo) are found. 
 
 These catalogues are cross-matched with [group catalogues](https://gax.sjtu.edu.cn/data/Group.html) found from galaxies in the SDSS-DR7 spectroscopic sample, which provides halo mass, and, central/satellite definition.
 
-[Cosmic web catalogues](https://arxiv.org/abs/1710.02676) are also cross-matched to this data 
-
-
-
-Data is taken from the Data Analysis Pipeline (DAP) which provides stellar and (ionized) gas velocity fields. Velocity fields are found by fitting the stellar continuum and Hα spectral lines respectively.
-
-
-Data is taken from the [MaNGA](https://www.sdss.org/surveys/manga/) galaxy survey and combined with [group catalogues](https://gax.sjtu.edu.cn/data/Group.html), and, [cosmic web catalogues](https://arxiv.org/abs/1710.02676).
+[Cosmic web catalogues](https://arxiv.org/abs/1710.02676) are also cross-matched to this data to provide distances to morphological features of the cosmic web such as distances to filaments and nodes. 
 
 ### Catalog class object
+Data catalogues (and various versions of MaNGA data releases) are brought together the catalog class object found [here](./lib/catalog.py)
 
-### Random Forest
+## Random Forest
 
-### Thesis plots
+## Thesis plots
