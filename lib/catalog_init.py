@@ -260,7 +260,6 @@ def select_cw_enviro(tab, feature, node_dist=2, filament_dist=2):
 		return tab[(tab.log_dnode_norm.values > np.log10(node_dist)) & (tab.log_dskel_norm.values > np.log10(filament_dist))]
 
 
-
 def return_matched_subsample(tab, col_name, match_values):
 	'''
 	Given a set of values (match_values), this function returns a subsample of the supplied
