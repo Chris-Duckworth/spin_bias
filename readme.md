@@ -1,7 +1,7 @@
 # Galaxy spin and environment
 This repo contains code to understand how a galaxy spin depends on properties such as stellar mass, halo mass, group membership, and, large-scale environment. 
 
-A galaxy's spin appears to be driven by stellar mass, however, shows secondary dependences on cluster-centric distance and even filamentary structure. This is detailed in chapter 4 of my [thesis](https://github.com/Chris-Duckworth/Thesis), and, best quickly summaried in ./scripts/random_forest. 
+A galaxy's spin appears to be strongly correlated with morphology, with secondary dependences on stellar mass and inclination (i.e. λ<sub>R</sub> is a biased obervational estimate), however, local and large-scale environment (filamentary structure) are informative (to a lesser degree). This is detailed in chapter 4 of my [thesis](https://github.com/Chris-Duckworth/Thesis), and, best quickly summaried in ./scripts/random_forest. 
 
 ## Data 
 Data is taken from various sources and a basic summary of each catalogue is given here, however, for more detail see [here](https://github.com/Chris-Duckworth/Thesis) and the references therein.
@@ -26,5 +26,7 @@ Data catalogues (and various versions of MaNGA data releases) are brought togeth
 The catalog class objects also contain various methods to select galaxy sub-samples based on these properties (`./lib/catalog_init.py`), for data processing `./lib/catalog_process.py` and plotting `./lib/catalog_plot.py`. These methods are tied together in `./catalog.py`, however, are mainly used for the `./scripts/thesis_plots` directory.
 
 ## Random Forest
+
+To evaluate the importance of various galaxy properties (including local and large-scale environment) in predicting a galaxy's spin 
 
 ## Thesis plots
