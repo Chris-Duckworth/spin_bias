@@ -71,4 +71,4 @@ A natural output of random forests is the relative importances of input features
 
 ![imp](./plots/random_forest/importances.png)
 
-We find that sersic index and inclination are most informative of predicting λ<sub>R</sub>, however there are reasonable contributions from stellar and halo mass along, and, small but significant contributions from cosmic-web environment. Group membership appears to be insignificant (however is encoded as a binary discrete parameter, which may impact its importance ranking relative to all other features which are continuous). 
+We find that sersic index and inclination are most informative of predicting λ<sub>R</sub>, however there are reasonable contributions from stellar and halo mass along with small but significant contributions from cosmic-web environment. Group membership appears to be insignificant (however is encoded as a binary discrete parameter, which may impact its importance ranking relative to all other features which are continuous). 
