@@ -27,6 +27,8 @@ Data catalogues (and various versions of MaNGA data releases) are brought togeth
 
 The catalog class objects also contain various methods to select galaxy sub-samples based on these properties (`./lib/catalog_init.py`), for data processing `./lib/catalog_process.py` and plotting `./lib/catalog_plot.py`. These methods are tied together in `./catalog.py`, however, are mainly used for the `./scripts/thesis_plots` directory.
 
+**MaNGA data used by the catalog object here is currently proprietary and hence not included in the repo.**
+
 ## Random Forest
 
 To evaluate the importance of various galaxy properties (including local and large-scale environment) in predicting a galaxy's spin, we generate a random forest to predict λ<sub>R</sub>. 
