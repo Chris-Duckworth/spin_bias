@@ -6,7 +6,7 @@ A galaxy's spin appears to be driven by stellar mass, however, shows secondary d
 ## Data 
 Data is taken from various sources and a basic summary of each catalogue is given here, however, for more detail see [here](https://github.com/Chris-Duckworth/Thesis) and the references therein.
 
-Integral field unit observations are from the [MaNGA](https://www.sdss.org/surveys/manga/) galaxy survey, which is processed by the internal Data Analysis Pipeline [DAP](https://www.sdss.org/dr15/manga/manga-analysis-pipeline/). This is used to compute $\lambda_R$, a flux weighted measure of coherent rotation of a galaxy [see here](https://ui.adsabs.harvard.edu/abs/2007MNRAS.379..401E/abstract). 
+Integral field unit observations are from the [MaNGA](https://www.sdss.org/surveys/manga/) galaxy survey, which is processed by the internal Data Analysis Pipeline [DAP](https://www.sdss.org/dr15/manga/manga-analysis-pipeline/). This is used to compute λ<sub>R</sub>, a flux weighted measure of coherent rotation of a galaxy [see here](https://ui.adsabs.harvard.edu/abs/2007MNRAS.379..401E/abstract). 
 
 Additional information is taken from the [NASA-Sloan Atlas](https://www.sdss.org/dr13/manga/manga-target-selection/nsa/) targetting catalogue which provides stellar mass, and, galaxy inclination. For all galaxies in MaNGA, morphological classifications from citizen science project [galaxyZoo](https://www.sdss.org/dr15/data_access/value-added-catalogs/?vac_id=manga-morphologies-from-galaxy-zoo) are found. 
 
