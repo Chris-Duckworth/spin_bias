@@ -65,12 +65,10 @@ def correlation_corner(df, cols, colors, names=None, coef='spearman', limits=Non
 			# annotating with corr. coef.
 			if coef == 'spearman' :
 				text = ('spearmanr=' + str(np.round(stats.spearmanr(df[cols[i]], 
-						df[cols[j]])[0],3)) +'; p=' + 
-						str(np.round(stats.spearmanr(df[cols[i]], df[cols[j]])[1], 4)) )
+						df[cols[j]])[0],3)) +'; p= {:.1e}'.format(stats.spearmanr(df[cols[i]], df[cols[j]])[1]) )
 			elif coef == 'pearson' :
 				text = ('pearson=' + str(np.round(stats.pearsonr(df[cols[i]], 
-						df[cols[j]])[0],3)) +'; p=' + 
-						str(np.round(stats.pearsonr(df[cols[i]], df[cols[j]])[1], 4)) )
+						df[cols[j]])[0],3)) +'; p= {:.1e}'.format(stats.pearsonr(df[cols[i]], df[cols[j]])[1]) )
 			else :
 				text = ''
 		
@@ -142,4 +140,137 @@ def importance_ranking(feature_labels, importances, sorted=True, figsize=(7, 5) 
 	ax.set_ylabel('Importance', fontsize=14)
 	ax.set_xlabel('Feature', fontsize=14)	
 	return fig, ax 
+
+
+def normed_step_poisson_histogram(data, bins=None, color='k', weights=None, median=False, ax=None, **kwargs):
+    '''
+    Normalised step histogram with poisson errorbars on each defined bin.
+    Optional weighting for each data-point.
+    Additional plotting arguments for plt.errorbar()
+    
+    ----------
+    Parameters
+    
+    data : np.array() or list
+        Data to histogram
+    
+    bins : np.array() or list
+        (Optional) Defined bins to histogram data
+    
+    color : matplotlib defined color
+        (Optional) Provide a color for the histogram, 
+        errorbars and median line.
+    
+    weights : np.array() or list
+        (Optional) Weights of same size as data
+    
+    median : bool
+        (Optional) Boolean on whether to include median line 
+        of data on histogram plot
+    
+    ax : matplotlib.pyplot.axis() object
+        (Optional) Matplotlib axis object to add histogram to
+    
+    **kwargs : 
+        Additional arguments passed to plt.hist()
+    
+    -------
+    Returns
+    
+    ax : matplotlib.pyplot.axis() object
+    '''
+    # if axes undefined, creating a new plot.
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.add_subplot()
+    
+    # if weights not supplied, assuming uniform weighting.
+    if weights is None:
+        weights = 1
+    
+    # if bins aren't supplied
+    if bins is None:
+        bins = np.linspace(np.min(data), np.max(data), 20)
+
+    # histogram with weighted normalised bins.
+    y, binEdges, _ = ax.hist(data, bins=bins, weights= weights * np.ones_like(data)/float(len(data)), 
+                             color=color, **kwargs)
+    bincenters = 0.5 * (binEdges[1:] + binEdges[:-1])
+    ax.errorbar(bincenters, y, yerr=np.sqrt(y*float(len(data))) / (float(len(data))), 
+                color=color, fmt='s', markersize=1.5, linewidth=1, alpha=0.5)
+    
+    # adding median line for distribution if required.
+    if median == True:
+        ax.axvspan(np.median(data) - stats.sem(data), np.median(data) + stats.sem(data), 
+                   ymin=0.8, color=color, alpha=0.3)
+        ax.axvline(np.median(data), ymin=0.8, color=color, linewidth=3, alpha=0.6)
+
+    return ax
+
+
+def normed_line_poisson_histogram(data, bins=None, color='k', weights=None, median=False, ax=None, **kwargs):
+    '''
+    Normalised line histogram with poisson errorbars on each defined bin.
+    Optional weighting for each data-point.
+    Additional plotting arguments for plt.errorbar()
+    
+    ----------
+    Parameters
+    
+    data : np.array() or list
+        Data to histogram
+    
+    bins : np.array() or list
+        (Optional) Defined bins to histogram data
+    
+    color : matplotlib defined color
+        (Optional) Provide a color for the histogram, 
+        errorbars and median line.
+    
+    weights : np.array() or list
+        (Optional) Weights of same size as data
+    
+    median : bool
+        (Optional) Boolean on whether to include median line 
+        of data on histogram plot
+    
+    ax : matplotlib.pyplot.axis() object
+        (Optional) Matplotlib axis object to add histogram to
+    
+    **kwargs : 
+        Additional arguments passed to plt.errorbar()
+    
+    -------
+    Returns
+    
+    ax : matplotlib.pyplot.axis() object
+    '''
+    # if axes undefined, creating a new plot.
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.add_subplot()
+    
+    # if weights not supplied, assuming uniform weighting.
+    if weights is None:
+        weights = 1
+    
+    # if bins aren't supplied
+    if bins is None:
+        bins = np.linspace(np.min(data), np.max(data), 20)
+    
+    # histogram with weighted normalised bins.
+    y, binEdges = np.histogram(data, bins, weights= weights * np.ones_like(data)/float(len(data)))
+    bincenters = 0.5 * (binEdges[1:] + binEdges[:-1])
+    ax.errorbar(bincenters, y, yerr=np.sqrt(y*float(len(data))) / (float(len(data))), 
+                color=color, **kwargs)
+    
+    # adding median line for distribution if required.
+    if median == True:
+        ax.axvspan(np.median(data) - stats.sem(data), np.median(data) + stats.sem(data), 
+                   ymin=0.8, color=color, alpha=0.3)
+        ax.axvline(np.median(data), ymin=0.8, color=color, linewidth=3, alpha=0.6)
+
+    return ax
+
+
 
